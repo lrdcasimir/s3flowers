@@ -1,0 +1,4 @@
+static/layout.css
+static/images/*
+node_modules/*
+**/build/*

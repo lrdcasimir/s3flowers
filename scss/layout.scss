@@ -1,0 +1,19 @@
+@import "color";
+#links {
+  text-align: center;
+}
+
+body {
+  background: $body;
+  color: $lowlight;
+}
+
+.container.hero {
+  width: 100%;
+  max-width:100%;
+  padding:0;
+  background: $mid;
+  color: $lowlight;
+  height: 400px;
+  border-bottom : solid 28px $highlight;
+}

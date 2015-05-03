@@ -1,0 +1,11 @@
+{
+	"version": 3,
+	"file": "layout.css",
+	"sources": [
+		"../layout.scss",
+		"../_color.scss"
+	],
+	"sourcesContent": [],
+	"mappings": "AACA;EACE,AAAY;;AAGd;EACE,ACHM;EDIN,ACPU;;ADUZ,AAAU;EACR,AAAO;EACP,AAAU;EACV,AAAQ;EACR,ACZK;EDaL,ACfU;EDgBV,AAAQ;EACR,AAAgB",
+	"names": []
+}

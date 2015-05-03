@@ -1,0 +1,28 @@
+{
+    "name": "s3flowers",
+    "main": "uploader/index.html",
+    "window": {
+        "width": 400,
+        "height": 700,
+        "toolbar": true
+    },
+    "scripts" : {
+        "start" : "nw"
+    },
+    "dependencies" :
+     {
+         "react":"latest",
+         "browserify": "latest",
+         "react-canvas": "latest",
+         "grunt": "latest",
+         "grunt-browserify":"latest",
+         "grunt-react" : "latest",
+         "grunt-sass": "latest",
+         "reactify":"latest",
+         "blueimp-gallery":"../Documents/Software/Gallery",
+         "nw" : "latest",
+         "promise": "latest",
+         "imagemagick": "latest"
+
+     }
+}
