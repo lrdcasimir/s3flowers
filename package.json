@@ -2,8 +2,8 @@
     "name": "s3flowers",
     "main": "uploader/index.html",
     "window": {
-        "width": 400,
-        "height": 700,
+        "width": 650,
+        "height": 500,
         "toolbar": true
     },
     "scripts" : {

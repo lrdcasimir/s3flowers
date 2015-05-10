@@ -1,9 +1,10 @@
 global.document= window.document;
 global.navigator= window.navigator;
 
-var React = require('react');
+var React = require('react/addons');
 var Promise = require('promise');
 var PortfolioImage = require('../build/components').PortfolioImage;
+var ReactCSSTransitionGroup = React.addons.CSSTransitionGroup;
 var fs = require('fs');
 var im = require('imagemagick');
 
@@ -15,12 +16,13 @@ var handleAddFile = function(textInput, fileInput,e){
       var destPath = 'static/images/'+name;
       var destStream = fs.createWriteStream(destPath);
       var srcStream = fs.createReadStream(srcPath);
+      var caption = textInput.value && textInput.value.length > 0 ? textInput.value : "No caption yet";
       srcStream.pipe(destStream);
       srcStream.on('end', function(){
         resizeImage(destPath)
         .then(updateDict.bind(null,textInput.value))
         .then(function(paths){
-          resolve( {url: paths.path, thumbnailPath: paths.thumbnailPath, caption: textInput.value});
+          resolve( {url: paths.path, thumbnailPath: paths.thumbnailPath, caption: caption});
         });
       });
     }
@@ -61,25 +63,31 @@ var resizeImage = function(destPath) {
   });
 }
 
-var updateDict = function(caption, paths){
+var updateDict = function(caption, paths, remove){
+    remove = remove || false;
     return new Promise(function(resolve,reject){
       fs.readFile('static/images/dict.json', function(e,dict){
         if(e){
-          alert("no dict");
+          console.log(e);
         } else {
           try {
-            var imgs = JSON.parse(dict);
-            imgs[paths.path] = {
-              "caption": caption,
-              "thumbnailPath" : paths.thumbnailPath
-            };
+            var imgs = JSON.parse(dict.toString());
+            if(remove){
+              delete(imgs[paths.path]);
+            } else {
+              imgs[paths.path] = {
+                "caption": caption,
+                "thumbnailPath" : paths.thumbnailPath
+              };
+            }
+
             var dictStream = fs.createWriteStream('static/images/dict.json');
             dictStream.end(JSON.stringify(imgs), function(e){
               resolve(paths);
             });
           } catch (err){
             console.log(err);
-            alert("Problem parsing image dictionary");
+            console.log("Problem parsing image dictionary");
           }
         }
       })
@@ -96,28 +104,34 @@ var PortfolioImageList = React.createClass({
     };
   },
   render: function(){
+    var self = this;
     return (
         <div className="pflist-container">
           <div className="new-image-container">
               <div className="new-image" onClick={this.handleClick}></div>
           </div>
-          <input type="text" ref="caption"></input>
           <input style={{display: "none"}} type="file" ref="pic" onChange={this.handleFile}/>
           <div ref="status"></div>
           <div className="portfolio-image-list">
-            {this.state.images.map( function(i) {
-                return <PortfolioImage
-                  key={i.url}
-                  src={i.url}
-                  caption={i.caption} />
+            <ReactCSSTransitionGroup transitionName="portfolio-image-animation">
+              {this.state.images.map( function(i){
+                  return <PortfolioImage
+                    handleRemove={self.handleRemove}
+                    handleChange={self.handleChange}
+                    key={i.url}
+                    src={i.url}
+                    thumbnail={i.thumbnailPath}
+                    caption={i.caption || "No caption yet"} />
 
-              })
-            }
+                })
+              }
+            </ReactCSSTransitionGroup>
           </div>
         </div>
       );
   },
   displayImgDict : function (){
+   var self = this;
    fs.stat('static/images/dict.json', function(e, stat){
       if(e){
         //create json dict
@@ -126,18 +140,14 @@ var PortfolioImageList = React.createClass({
       } else {
         fs.readFile('static/images/dict.json', function(e,dict){
            if(e){
-               alert("no dict");
+               console.log(e);
            } else {
-               try {
-                   var imgs = JSON.parse(dict);
-                   var components = Object.keys(imgs).map(function(k){
-                     return { url: k, caption: imgs[k].caption };
-                   });
-                   this.setState({images: components});
+             var imgs = JSON.parse(dict.toString());
+             var components = Object.keys(imgs).map(function(k){
+               return { url: k, caption: imgs[k].caption, thumbnailPath: imgs[k].thumbnailPath};
+             });
+             self.setState({images: components});
 
-               } catch (err){
-                   console.log(err);
-               }
            }
         });
       }
@@ -156,6 +166,30 @@ var PortfolioImageList = React.createClass({
     },function(reason){
 
     });
+  },
+  handleChange: function(caption, paths){
+    //update our state optimistically,
+    //first mapping our old state to our new state
+    var nextImages = this.state.images.map(function(i){
+      if(i.url === paths.path){
+        return {
+          url : i.url,
+          thumbnailPath: i.thumbnailPath,
+          caption: caption
+        };
+      }
+      return i;
+    });
+    this.setState({images: nextImages});
+    //then update the json dict
+    updateDict(caption, paths);
+  },
+  handleRemove: function(paths){
+    var nextImages = this.state.images.filter(function(i){
+      return i.url !== paths.path;
+    });
+    this.setState({images: nextImages});
+    updateDict("",paths, true);
   }
 });
 

@@ -1,5 +1,27 @@
+body {
+    /* This has to be same as the text-shadows below */
+    background: #def;
+}
+h1 {
+    font-family: Helvetica, Arial, sans-serif;
+    font-weight: bold;
+    font-size: 6em;
+    line-height: 1em;
+}
+.inset-text {
+    /* Shadows are visible under slightly transparent text color */
+    color: rgba(10,60,150, 0.8);
+    text-shadow: 1px 4px 6px #def, 0 0 0 #000, 1px 4px 6px #def;
+}
+
+.portfolio-image {
+  float : left;
+  min-height : 220px;
+}
 .portfolio-image img {
   max-width : 150px;
+  margin: 1.5rem;
+  border: 2px solid black;
 }
 .new-image-container {
   position:relative;
@@ -9,6 +31,7 @@
   height : 200px;
   width : 150px;
   background-color: #E0E0E0;
+  box-shadow: 1px 4px 6px #def, 0 0 0 #000, 1px 4px 6px #def;
   position: absolute;
   top: 0;
   left: 0;
@@ -32,3 +55,55 @@
   height: 5;
   background-color: #D4D4D4;
 }
+
+.portfolio-image{
+  position: relative;
+}
+
+.portfolio-image .remove-indicator {
+  position: absolute;
+  height: 1.6em;
+  width: 1.6em;
+  top: 5em;
+  right: 2em;
+}
+
+.portfolio-image .remove-indicator::after {
+  position: absolute;
+  right:0em;
+  top:0em;
+  content:"X";
+  font-family: "Helvetica Neue" sans-serif;
+  color: #EEE;
+  text-shadow: grey .5px .3px;
+  transform: scale(3) translateX(-0.2em) translateY(0.2em) rotateZ(0deg);
+}
+
+.portfolio-image-animation-enter {
+  transition: opacity 1s ease-in;
+  opacity: 0.1;
+}
+
+.portfolio-image-animation-enter.portfolio-image-animation-enter-active {
+  opacity: 1;
+}
+.portfolio-image-animation-enter .remove-indicator::after {
+  transition: transform 1.8s ease-in, opacity 1.8s ease-in;
+  transform: scale(1.0) rotateZ(-45deg);
+  opacity: 1;
+}
+
+.portfolio-image-animation-enter.portfolio-image-animation-enter-active .remove-indicator::after {
+  transform: scale(3) translateX(-0.2em) translateY(0.2em) rotateZ(0deg);
+  opacity:0.8;
+}
+
+.portfolio-image-animation-leave {
+  transition: opacity 1.8s ease-in;
+  opacity: 1;
+
+}
+.portfolio-image-animation-leave.portfolio-image-animation-leave-active {
+  opacity:0.1 ;
+}
+

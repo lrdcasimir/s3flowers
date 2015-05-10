@@ -1,4 +1,4 @@
-var React = require('react'),
+var React = require('react/addons'),
     ReactCanvas = require('react-canvas'),
     articles = require('./data.js'),
     Item = require('./components/Item.js'),
