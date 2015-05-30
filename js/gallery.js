@@ -44,9 +44,10 @@ http.get(  pathPrefix + '/static/images/dict.json', function(res){
       var link = document.createElement('a');
       var thumb = document.createElement('img');
       thumb.setAttribute('src', gdo.thumbnail);
-      thumb.setAttribute('title', gdo.title);
+      thumb.setAttribute('alt', gdo.title);
       link.appendChild(thumb);
       link.setAttribute('href', gdo.href);
+      link.setAttribute('title', gdo.title);
       link.onclick = function(event){
         event = event || window.event;
         var target = event.target || event.srcElement,

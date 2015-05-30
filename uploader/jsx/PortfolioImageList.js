@@ -159,7 +159,7 @@ var PortfolioImageList = React.createClass({
   handleFile: function(e){
     var self = this;
     handleAddFile(
-      React.findDOMNode(this.refs.caption),
+      "Caption me!",
       React.findDOMNode(this.refs.pic),
       e).then(function(newPic){
       self.setState({images: self.state.images.concat([newPic])});
