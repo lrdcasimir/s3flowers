@@ -7,6 +7,8 @@ var PortfolioImage = require('../build/components').PortfolioImage;
 var ReactCSSTransitionGroup = React.addons.CSSTransitionGroup;
 var fs = require('fs');
 var im = require('imagemagick');
+var knox = require('knox');
+var client = knox.createClient(require('../../s3config.json'));
 
 var handleAddFile = function(textInput, fileInput,e){
   return new Promise(function(resolve, reject){
@@ -26,6 +28,31 @@ var handleAddFile = function(textInput, fileInput,e){
         });
       });
     }
+  });
+};
+
+var publishS3File = function(dirpath, file){
+  return new Promise(function(resolve,reject){
+    fs.stat(dirpath + file, function(e, stat){
+      if(e){
+        reject(e);
+      } else {
+        var readStream = fs.createReadStream(dirpath + file);
+        var mimeType = file.indexOf('JPG') > 0 || file.indexOf('jpg') > 0 ? 'image/jpeg' : 'text/json';
+        var headers = {
+          'Content-Type' : mimeType,
+          'Content-Length' : stat.size,
+          'x-amz-acl' : 'public-read'
+        };
+        client.putStream(readStream, dirpath + file, headers, function(err, res){
+          if(err){
+            reject(err);
+          } else {
+            resolve(res);
+          }
+        });
+      }
+    });
   });
 };
 
@@ -100,7 +127,8 @@ var PortfolioImageList = React.createClass({
   getInitialState : function (){
     this.displayImgDict()
     return {
-      images : []
+      images : [],
+      publishStatus : ""
     };
   },
   render: function(){
@@ -110,6 +138,10 @@ var PortfolioImageList = React.createClass({
           <div className="new-image-container">
               <div className="new-image" onClick={this.handleClick}></div>
           </div>
+          <div>
+            {this.state.publishStatus}
+          </div>
+          <button onClick={this.handlePublish}>Publish!</button>
           <input style={{display: "none"}} type="file" ref="pic" onChange={this.handleFile}/>
           <div ref="status"></div>
           <div className="portfolio-image-list">
@@ -126,6 +158,8 @@ var PortfolioImageList = React.createClass({
                 })
               }
             </ReactCSSTransitionGroup>
+
+
           </div>
         </div>
       );
@@ -146,7 +180,7 @@ var PortfolioImageList = React.createClass({
              var components = Object.keys(imgs).map(function(k){
                return { url: k, caption: imgs[k].caption, thumbnailPath: imgs[k].thumbnailPath};
              });
-             self.setState({images: components});
+             self.setState({images: components, publishStatus: self.state.publishStatus});
 
            }
         });
@@ -162,7 +196,7 @@ var PortfolioImageList = React.createClass({
       "Caption me!",
       React.findDOMNode(this.refs.pic),
       e).then(function(newPic){
-      self.setState({images: self.state.images.concat([newPic])});
+      self.setState({images: self.state.images.concat([newPic]), publishStatus: "Changes unpublished."});
     },function(reason){
 
     });
@@ -180,15 +214,53 @@ var PortfolioImageList = React.createClass({
       }
       return i;
     });
-    this.setState({images: nextImages});
+    this.setState({images: nextImages, publishStatus:"Changes unpublished."});
     //then update the json dict
     updateDict(caption, paths);
+  },
+  handlePublish: function(){
+    var self = this;
+    fs.readdir('static/images/',function(e, files){
+      var pushed = 0;
+      var failed = 0;
+      if(e){
+        console.log(e);
+      } else {
+        files.forEach(function(file){
+
+          publishS3File('static/images/', file)
+          .then(function(res){
+            console.log(JSON.stringify(res.statusCode));
+            console.log("pushed " + pushed , failed, files.length) -7;
+            pushed++;
+            self.setState({images: self.state.images , publishStatus: pushed + ' images published'});
+            if((pushed + failed) == files.length){
+              console.log('finished');
+              self.setState({images: self.state.images, publishStatus: "Published!"});
+            } else {
+
+            }
+          }, function(e){
+            console.log(e);
+            failed++;
+            self.setState({images: self.state.images, publishStatus: pushed + ' images published, ' + failed + ' images failed'});
+            if((pushed + failed) == files.length){
+              console.log('finished');
+              self.setState({images: self.state.images, publishStatus:"Published!"});
+            } else {
+            }
+          });
+        });
+      }
+    });
   },
   handleRemove: function(paths){
     var nextImages = this.state.images.filter(function(i){
       return i.url !== paths.path;
     });
-    this.setState({images: nextImages});
+    fs.unlink(paths.path);
+    fs.unlink(paths.thumbnailPath);
+    this.setState({images: nextImages, publishStatus: "Unpublished changes."});
     updateDict("",paths, true);
   }
 });

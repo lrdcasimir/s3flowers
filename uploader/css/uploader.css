@@ -2,16 +2,27 @@ body {
     /* This has to be same as the text-shadows below */
     background: #def;
 }
+.title-text {
+  width: 100%;
+  margin: 0;
+  position:fixed;
+  top: 0;
+  z-index: 10;
+  background: #def;
+}
 h1 {
     font-family: Helvetica, Arial, sans-serif;
     font-weight: bold;
-    font-size: 6em;
-    line-height: 1em;
+    font-size: 4.5em;
+    line-height: .75em;
 }
 .inset-text {
     /* Shadows are visible under slightly transparent text color */
     color: rgba(10,60,150, 0.8);
     text-shadow: 1px 4px 6px #def, 0 0 0 #000, 1px 4px 6px #def;
+}
+.pflist-container {
+  margin-top: 10em;
 }
 
 .portfolio-image {
@@ -31,7 +42,7 @@ h1 {
   height : 200px;
   width : 150px;
   background-color: #E0E0E0;
-  box-shadow: 1px 4px 6px #def, 0 0 0 #000, 1px 4px 6px #def;
+
   position: absolute;
   top: 0;
   left: 0;

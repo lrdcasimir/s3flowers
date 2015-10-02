@@ -38,7 +38,6 @@ http.get(  pathPrefix + '/static/images/dict.json', function(res){
       };
     });
     var linksContainer = document.querySelector('#links');
-    //var gallery = bg(galleryData, options);
 
     galleryData.forEach(function(gdo){
       var link = document.createElement('a');

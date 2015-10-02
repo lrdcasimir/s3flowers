@@ -1,4 +1,4 @@
-s3config.json
+**/s3config.json
 static/layout.css
 static/images/*
 node_modules/*

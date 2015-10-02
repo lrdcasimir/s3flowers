@@ -14,8 +14,8 @@ body {
   padding:0;
   background: $mid;
   color: $lowlight;
-  height: 19.5rem;
-  border-bottom : solid 4em $highlight;
+  height: 20rem;
+  border-bottom : solid 4.5em $highlight;
 }
 
 .main-content {
@@ -44,4 +44,27 @@ body {
 .copyright {
   float:right;
   margin-top: -3em;
+}
+
+#links a {
+  display: inline-block;
+  max-height: 200px;
+  overflow: hidden;
+}
+
+.headline-font {
+  font-family: 'stringfellowsregular';
+}
+
+@font-face {
+    font-family: 'stringfellowsregular';
+    src: url('stringfellows-webfont.eot');
+    src: url('stringfellows-webfont.eot?#iefix') format('embedded-opentype'),
+         url('stringfellows-webfont.woff2') format('woff2'),
+         url('stringfellows-webfont.woff') format('woff'),
+         url('stringfellows-webfont.ttf') format('truetype'),
+         url('stringfellows-webfont.svg#stringfellowsregular') format('svg');
+    font-weight: normal;
+    font-style: normal;
+
 }

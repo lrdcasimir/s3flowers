@@ -2,9 +2,10 @@
     "name": "s3flowers",
     "main": "uploader/index.html",
     "window": {
-        "width": 650,
-        "height": 500,
-        "toolbar": true
+        "width": 850,
+        "height": 600,
+        "toolbar": false,
+        "title": "S3 Flowers Publisher"
     },
     "scripts" : {
         "start" : "nw"
@@ -18,11 +19,15 @@
          "grunt-browserify":"latest",
          "grunt-react" : "latest",
          "grunt-sass": "latest",
+         "grunt-contrib-uglify":"latest",
          "reactify":"latest",
+         "uglifyify":"latest",
+         "minifyify":"latest",
          "blueimp-gallery":"../Documents/Software/Gallery",
          "nw" : "latest",
          "promise": "latest",
-         "imagemagick": "latest"
+         "imagemagick": "latest",
+         "knox": "latest"
 
      }
 }

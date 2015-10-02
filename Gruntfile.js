@@ -31,10 +31,18 @@ module.exports = function(grunt){
               'static/layout.css' : 'scss/layout.scss'
             }
           }
+        },
+        uglify : {
+         "index": {
+          files:{
+           "build/index-min.js": ["build/index.js"]
+          }
+         }
         }
     });
     grunt.loadNpmTasks('grunt-browserify');
     grunt.loadNpmTasks('grunt-react');
     grunt.loadNpmTasks('grunt-sass');
-    grunt.registerTask('default', ['browserify','react', 'sass']);
+    grunt.loadNpmTasks('grunt-contrib-uglify');
+    grunt.registerTask('default', ['browserify','react', 'sass', 'uglify']);
 };
